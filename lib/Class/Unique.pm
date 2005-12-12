@@ -6,7 +6,7 @@ use strict;
 use Scalar::Util 'refaddr';
 use Carp 'croak';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my $PKG = 'Class::Unique PACKAGE';
 
@@ -46,7 +46,7 @@ Class::Unique - Create a unique subclass for every instance
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -75,9 +75,7 @@ Class::Unique is a base class which provides a constructor and some utility rout
 for creating objects which instantiate into a unique subclass. If MyClass is a subclass
 of Class::Unique, and inherrits Class::Unique's constructor, then every object returned
 by MyClass->new will be blessed into a dynamically created subclass of MyClass. This 
-allows you to modify package data on a per-instance basis. L<Class::Prototyped> 
-provides similar functionality; use this module if you want per-instance subclasses
-but you don't require a full-fledged prototype-based OO framework. 
+allows you to modify package data on a per-instance basis. 
 
 =head1 METHODS
 
@@ -91,29 +89,25 @@ Constructor. Returns a hash ref blessed into a new dynamically created package.
 
 =item C<install()>
 
-Install a new package variable into an object's class. 
+Install a new subroutine into an object's class. 
 
-  $obj->install( varname => $some_ref );
+  $obj->install( subname => $code_ref );
 
 This is really just a shortcut for doing:
 
   my $pkg = ref $obj;
   no strict 'refs';
-  *{ $pkg . '::varname' } = $code_ref;
-
-The most useful thing to do is probably to assign coderefs in order to play
-with your object's methods:
-
-  $obj->install( some_method => sub { print "this is a method for just this object!" } );
-  $obj->some_method;
-
-But you can use C<install> to install a hash, array or scalar reference as well.
+  *{ $pkg . '::subname' } = $code_ref;
 
 =back
 
 =head1 AUTHOR
 
 Mike Friedman, C<< <friedo@friedo.com> >>
+
+=head1 THANKS
+
+Thanks to Stevan Little for submitting some unit tests.
 
 =head1 BUGS
 
