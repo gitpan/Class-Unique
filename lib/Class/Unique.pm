@@ -6,9 +6,9 @@ use strict;
 use Scalar::Util 'refaddr';
 use Carp 'croak';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
-my $PKG = 'Class::Unique PACKAGE';
+my $PKG = "Class::Unique pkg";
 
 sub new { 
     my $class = shift;
@@ -46,7 +46,7 @@ Class::Unique - Create a unique subclass for every instance
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
@@ -72,10 +72,15 @@ Version 0.02
 =head1 DESCRIPTION
 
 Class::Unique is a base class which provides a constructor and some utility routines
-for creating objects which instantiate into a unique subclass. If MyClass is a subclass
+for creating objects which instantiate into a unique subclass.
+
+If MyClass is a subclass
 of Class::Unique, and inherrits Class::Unique's constructor, then every object returned
-by MyClass->new will be blessed into a dynamically created subclass of MyClass. This 
+by C<MyClass->new> will be blessed into a dynamically created subclass of MyClass. This 
 allows you to modify package data on a per-instance basis. 
+
+L<Class::Prototyped> provides similar functionality; use this module if you want per-instance
+subclasses but you don't need a full prototype-based OO framework.
 
 =head1 METHODS
 
@@ -85,13 +90,30 @@ The following methods are inherrited.
 
 =item C<new()>
 
-Constructor. Returns a hash ref blessed into a new dynamically created package.
+Constructor. Returns a hash ref blessed into a new dynamically created package. If you need
+to override the constructor, make sure you get your object by using C<SUPER::new> instead
+of blessing it yourself.
+
+  package MyClass;
+  use base 'Class::Unique';
+
+  sub new { 
+      my $class = shift;
+      my $self = $class->SUPER::new( @_ );
+
+      # fiddle with $self here....
+
+      return $self;
+  }
 
 =item C<install()>
 
-Install a new subroutine into an object's class. 
+Install a new symbol into an object's namespace. This can be used to dynamically override
+an inherrited subroutine, e.g.:
 
-  $obj->install( subname => $code_ref );
+  my $code_ref = sub { print "wahoo!\n" };
+  $obj->install( exclaim => $code_ref );
+  $obj->exclaim;
 
 This is really just a shortcut for doing:
 
@@ -99,11 +121,17 @@ This is really just a shortcut for doing:
   no strict 'refs';
   *{ $pkg . '::subname' } = $code_ref;
 
+You can also use C<install> to add other package symbols:
+
+  my @data = ( 1, 2, 3, 4 );
+  $obj->install( data => \@data );
+  
+
 =back
 
 =head1 AUTHOR
 
-Mike Friedman, C<< <friedo@friedo.com> >>
+Mike Friedman, C<< <friedo at friedo dot com> >>
 
 =head1 THANKS
 
