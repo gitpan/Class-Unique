@@ -1,12 +1,12 @@
 package Class::Unique;
 
-use warnings;
 use strict;
+use warnings;
 
 use Scalar::Util 'refaddr';
 use Carp 'croak';
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 my $PKG = "Class::Unique pkg";
 
@@ -46,7 +46,7 @@ Class::Unique - Create a unique subclass for every instance
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -76,7 +76,7 @@ for creating objects which instantiate into a unique subclass.
 
 If MyClass is a subclass
 of Class::Unique, and inherrits Class::Unique's constructor, then every object returned
-by C<MyClass->new> will be blessed into a dynamically created subclass of MyClass. This 
+by C<< MyClass->new >> will be blessed into a dynamically created subclass of MyClass. This 
 allows you to modify package data on a per-instance basis. 
 
 L<Class::Prototyped> provides similar functionality; use this module if you want per-instance
